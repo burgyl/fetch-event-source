@@ -26,6 +26,11 @@ export interface FetchEventSourceInit extends RequestInit {
     onmessage?: (ev: EventSourceMessage) => void;
 
     /**
+     * Called when a line that is not a message is received.
+     */
+    onlineincorrectlyformatted?: (line: string) => void;
+
+    /**
      * Called when a response finishes. If you don't expect the server to kill
      * the connection, you can throw an exception here and retry using onerror.
      */
@@ -58,6 +63,7 @@ export function fetchEventSource(input: RequestInfo, {
     headers: inputHeaders,
     onopen: inputOnOpen,
     onmessage,
+    onlineincorrectlyformatted,
     onclose,
     onerror,
     openWhenHidden,
@@ -120,7 +126,7 @@ export function fetchEventSource(input: RequestInfo, {
                     }
                 }, retry => {
                     retryInterval = retry;
-                }, onmessage)));
+                }, onmessage), onlineincorrectlyformatted));
 
                 onclose?.();
                 dispose();
