@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 2.0.2
+### Changed
+- The `onlineincorrectlyformatted` callback is now called when a line that is not a message is received.
+
 ## 2.0.1
 This release adds support for esmodule imports (see #4).
 

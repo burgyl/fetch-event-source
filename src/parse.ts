@@ -40,11 +40,12 @@ const enum ControlChars {
  * @param onLine A function that will be called on each new EventSource line.
  * @returns A function that should be called for each incoming byte chunk.
  */
-export function getLines(onLine: (line: Uint8Array, fieldLength: number) => void) {
+export function getLines(onLine: (line: Uint8Array, fieldLength: number) => void, onLineIncorrectlyFormatted?: (line: string) => void) {
     let buffer: Uint8Array | undefined;
     let position: number; // current read position
     let fieldLength: number; // length of the `field` portion of the line
     let discardTrailingNewline = false;
+    const decoder = new TextDecoder();
 
     // return a function that can process each incoming byte chunk:
     return function onChunk(arr: Uint8Array) {
@@ -89,6 +90,7 @@ export function getLines(onLine: (line: Uint8Array, fieldLength: number) => void
             if (lineEnd === -1) {
                 // We reached the end of the buffer but the line hasn't ended.
                 // Wait for the next arr and then continue parsing:
+                onLineIncorrectlyFormatted?.(decoder.decode(arr));
                 break;
             }
 
